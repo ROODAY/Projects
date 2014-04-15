@@ -1,14 +1,18 @@
 password = "12345"
 going = True
 attemptsLeft = 5
+readable = ""
+x = 0
 with open("data/passwordprompt.txt") as data:
 	viewable = data.read().splitlines()
-
+while x < len(viewable):
+	readable += viewable[x] + "\n"
+	x += 1
 while going:
 	typed = input("Please Input Password: ")
 
 	if typed == password:
-		print(viewable)
+		print(readable)
 		going = False
 		print("Goodbye")
 	else:
