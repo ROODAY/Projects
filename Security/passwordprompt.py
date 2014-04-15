@@ -137,12 +137,14 @@ while x < len(viewable):
 			return string
 
 	def decode(string):
-		product = ""
-		letter = 0
-		while letter < len(string):
-			product += unshift(string[letter])
+		x = 0
+		decoded = ""
+		while x < len(string):
+			decoded += str(unshift(string[x]))
+			x += 1
+		return decoded
 
-	readable += viewable[x] + "\n"
+	readable += decode(viewable[x]) + "\n"
 	x += 1
 while going:
 	typed = input("Please Input Password: ")
@@ -150,15 +152,15 @@ while going:
 	if typed == password:
 		choosing = True
 		while choosing:
-			ans = input("Would you like to read (1) or write (2)?")
+			ans = input("Would you like to read (1) or write (2)? ")
 			if ans == "1":
 				print(readable)
 				choosing = False
 				going = False
-				print("Goodbye")
+				print("Goodbye!")
 			elif ans == "2":
 				writing = True
-				savethis = input("Please enter the data with format\"Login | Email | Password\"")
+				savethis = input("Please enter the data with format \"Login | Email | Password\" ")
 
 				def shift(string):
 					if string == "a":
@@ -292,23 +294,25 @@ while going:
 					x = 0
 					encoded = ""
 					while x < len(string):
-						encoded += shift(string[x])
+						encoded += str(shift(string[x]))
 						x += 1
+					return encoded
+
 				finished = encode(savethis) + "\n"
 				data.write(finished)
-				print(finished)
-				shouldEnd = input("Are you done? Yes (1), No (2)")
+				print(finished," was saved to data")
+				shouldEnd = input("Are you done? Yes (1), No (2) ")
 				if shouldEnd == "1":
 					writing = False
 					choosing = False
 					going = False
+					print("Goodbye!")
 				elif shouldEnd == "2":
 					writing = False
-					choosing = False
 				else:
-					print("That is not an option")
+					print("That is not an option!")
 			else:
-				print("That is not an option")
+				print("That is not an option!")
 
 	else:
 		def grammar():
