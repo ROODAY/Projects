@@ -1,4 +1,4 @@
-n = int(raw_input("Enter a number: "))
+n = int(input("Enter a number: "))
 series = [1]
 
 while len(series) < n:
@@ -7,4 +7,4 @@ while len(series) < n:
 	else:
 		series.append(series[-1] + series[-2])
 
-print "The Fibonacci sequence to the number you entered is " + series
+print("The Fibonacci sequence to the number you entered is ", series)
