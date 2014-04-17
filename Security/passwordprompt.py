@@ -50,7 +50,7 @@ with open("data/passwordpromptdata.txt", "r+") as data:
 								decodecount = 0
 								while decodecount < len(viewabledata):
 									def unoffset(letter, offset):
-										if (ord(letter) - letter) < 32:
+										if (ord(letter) - offset) < 32:
 											return chr(((ord(letter) - offset) - 32) + 127)
 										else:
 											return chr(ord(letter) - offset)
@@ -62,8 +62,9 @@ with open("data/passwordpromptdata.txt", "r+") as data:
 											stringpos += 1
 										return decoded
 
-									readableprereq = decode(viewabledata[decodecount], viewableoffsets[decodecount])
-									readable += readableprereq[2:] + "\n"
+									dataToDecrypt = viewabledata[decodecount]
+									offsetToUse = viewableoffsets[decodecount]
+									readable += decode(dataToDecrypt, offsetToUse) + "\n"
 									decodecount += 1
 
 								#Print data and end script
@@ -124,6 +125,18 @@ with open("data/passwordpromptdata.txt", "r+") as data:
 									choosing = False
 									running = False
 									print("Goodbye!")
+
+							#Option 3 lets a user delete an entry
+							elif ans == "3":
+								print("hello")
+
+							#Option 4 lets a user edit an entry
+							elif ans == "4":
+								print("hello")
+
+							#Option 5 lets a user change the password
+							elif ans == "5":
+								print("hello")
 
 							#Any answer that isn't an option ends the script
 							else:
