@@ -5,7 +5,7 @@ from random import randrange
 with open("data/passwordpromptdata.txt", "r+") as data:
 	with open("data/passwordpromptoffsets.txt", "r+") as offsets:
 		with open("data/passwordpromptpassword.txt", "r+") as rawpassword:
-			with open("data/passwordpromptconfig", "r+") as config:
+			with open("data/passwordpromptconfig.txt", "r+") as config:
 
 				#Read config and prepare necessary variables
 
@@ -20,6 +20,7 @@ with open("data/passwordpromptdata.txt", "r+") as data:
 					passwordfinal = ""
 					while counter < len(password):
 						passwordfinal += chr(ord(password[counter]) - offset)
+						counter += 1
 					return passwordfinal
 				password = rawpassword.read().splitlines()
 				password = showpassword(password[1], int(password[0]))
@@ -42,13 +43,17 @@ with open("data/passwordpromptdata.txt", "r+") as data:
 							#Option 1 unscrambles then prints entries 
 							if ans == "1":
 								#Prepare and decrypt data
-								viewable = data.read().splitlines()
+								viewabledata = data.read().splitlines()
+								viewableoffsets = offsets.read().splitlines()
+
 								readable = ""
 								decodecount = 0
-								while decodecount < len(viewable):
+								while decodecount < len(viewabledata):
 									def unoffset(letter, offset):
-										return chr(ord(letter) - offset)
-
+										if (ord(letter) - letter) < 32:
+											return chr(((ord(letter) - offset) - 32) + 127)
+										else:
+											return chr(ord(letter) - offset)
 									def decode(string, offsetnum):
 										stringpos = 0
 										decoded = ""
@@ -57,9 +62,8 @@ with open("data/passwordpromptdata.txt", "r+") as data:
 											stringpos += 1
 										return decoded
 
-									offsetprereq = viewable[decodecount]
-									readableprereq = decode(viewable[decodecount], offsetprereq[0])
-									readable += readableprereq[1:] + "\n"
+									readableprereq = decode(viewabledata[decodecount], viewableoffsets[decodecount])
+									readable += readableprereq[2:] + "\n"
 									decodecount += 1
 
 								#Print data and end script
@@ -75,11 +79,15 @@ with open("data/passwordpromptdata.txt", "r+") as data:
 								writing = True
 								savethis = input("Please enter the data with format \"Login | Email | Password\" ")
 
-								#Encyrpts entry
-								finished = ""
-								randoffset = randrange(3,6)
+								#Encyrpts entry by converting to ASCII code and shifting by offset. It will wrap code if the offset pushes it too far
+								finisheddata = ""
+								finishedoffset = 0
+								randoffset = randrange(10,100)
 								def offset(offset, letter):
-									return chr(ord(letter) + offset)
+									if (ord(letter) + offset) > 126:
+										return chr(((ord(letter) + offset) - 126) + 31)
+									else:
+										return chr(ord(letter) + offset)
 								def encode(string, offsetnum):
 									stringpos = 0
 									encoded = ""
@@ -87,11 +95,13 @@ with open("data/passwordpromptdata.txt", "r+") as data:
 										encoded += offset(offsetnum, string[stringpos])
 										stringpos += 1
 									return encoded
-								finished = str(randoffset) + encode(savethis,randoffset) + "\n"
+								finisheddata = encode(savethis,randoffset) + "\n"
+								finishedoffset = str(randoffset) + "\n"
 
-								#Saves entry to data, prints what was saved
-								data.write(finished)
-								print(finished," was saved to data")
+								#Saves entry to data, saves offset to offsets prints what was saved
+								data.write(finisheddata)
+								offsets.write(finishedoffset)
+								print(finisheddata," was saved to data")
 
 								#Prompts user if they are done adding entries
 								shouldEnd = input("Are you done adding? Yes (1), No (2) ")
