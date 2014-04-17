@@ -14,7 +14,10 @@ with open("data/passwordprompt.txt", "r+") as data:
 
 	while decodecount < len(viewable):
 		def unoffset(letter, offset):
-			return chr(ord(letter) - offset)
+			if (ord(letter) - offset) < 32:
+				return chr(127 - (offset - (ord(letter) - 32)))
+			elif (ord(letter) - offset) > 32:
+				return chr(ord(letter) + offset)
 
 		def decode(string, offsetnum):
 			stringpos = 0
@@ -24,17 +27,18 @@ with open("data/passwordprompt.txt", "r+") as data:
 				stringpos += 1
 			return decoded
 
-		offsetprereq = viewable[decodecount]
-		readableprereq = decode(viewable[decodecount], offsetprereq[0])
-		readable += readableprereq[1:] + "\n"
+		offsetprereq = str(viewable[decodecount])
+		finaloffset = str(offsetprereq[0]) + str(offsetprereq[1])
+		readableprereq = decode(viewable[decodecount], int(finaloffset))
+		readable += readableprereq[2:] + "\n"
 		decodecount += 1
 
 	while running:
-		typed = input("Please Input Password: ")
+		typed = str(input("Please Input Password: "))
 
 		if typed == password:
 			choosing = True
-			ans = input("Would you like to read (1) or write (2)? ")
+			ans = str(input("Would you like to read (1) or write (2)? "))
 			while choosing:
 				if ans == "1":
 					print(readable)
@@ -45,22 +49,25 @@ with open("data/passwordprompt.txt", "r+") as data:
 					writing = True
 					savethis = input("Please enter the data with format \"Login : Email : Password\" ")
 					finished = ""
-					randoffset = randrange(3,6)
 					def offset(offset, letter):
-						return chr(ord(letter) + offset)
+						if (ord(letter) + offset) > 126:
+							return chr(((ord(letter) + offset) - 126) + 31)
+						elif (ord(letter) + offset) < 126:
+							return chr(ord(letter) + offset)
 
-					def encode(string, offsetnum):
+					def encode(string):
 						stringpos = 0
-						encoded = ""
+						randoffset = randrange(10,100)
+						encoded = str(randoffset)
 						while stringpos < len(string):
-							encoded += offset(offsetnum, string[stringpos])
+							encoded += offset(randoffset, string[stringpos])
 							stringpos += 1
 						return encoded
 
-					finished = str(randoffset) + encode(savethis,randoffset) + "\n"
+					finished = encode(savethis) + "\n"
 					data.write(finished)
 					print(finished," was saved to data")
-					shouldEnd = input("Are you done adding? Yes (1), No (2) ")
+					shouldEnd = str(input("Are you done adding? Yes (1), No (2) "))
 					if shouldEnd == "1":
 						writing = False
 						choosing = False
